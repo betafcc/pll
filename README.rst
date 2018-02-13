@@ -1,7 +1,7 @@
 P
 ==
 
-`p` wasn't taken in pip, so I build a package around it
+``p`` wasn't taken in pypi, so I build a package around it
 
 Quick install
 -------------
