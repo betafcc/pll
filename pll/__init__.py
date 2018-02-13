@@ -17,7 +17,7 @@ A = TypeVar('A')
 B = TypeVar('B')
 
 
-class P(Generic[A], Iterable[A]):
+class Pll(Generic[A], Iterable[A]):
     def __init__(self,
                  it : Iterable[Awaitable[A]],
                  *,
@@ -31,23 +31,23 @@ class P(Generic[A], Iterable[A]):
     @classmethod
     def from_non_coroutines(cls,
                             it : Iterable[A],
-                            ) -> 'P[A]':
+                            ) -> 'Pll[A]':
         return cls(as_submitted(pure(el) for el in it))
 
     def __reconstruct(self,
                       it : Iterable[Awaitable[B]],
                       executor : Executor = None,
                       pbars : List[tqdm.tqdm] = None,
-                      ) -> 'P[B]':
+                      ) -> 'Pll[B]':
         if executor is None:
             executor = self.executor
         if pbars is None:
             pbars = self.pbars
 
-        return P(it,
-                 executor=executor,
-                 pbars=pbars,
-                 )
+        return Pll(it,
+                   executor=executor,
+                   pbars=pbars,
+                   )
 
     def __iter__(self,
                  ) -> Iterator[A]:
@@ -60,7 +60,7 @@ class P(Generic[A], Iterable[A]):
 
     def map(self,
             f : Callable[[A], B],
-            ) -> 'P[B]':
+            ) -> 'Pll[B]':
         _ : Any
         _ = self.it
         _ = fmap(fmap(f), _)
@@ -71,7 +71,7 @@ class P(Generic[A], Iterable[A]):
                         f : Callable[[A], B],
                         executor : Executor = None,
                         loop : AbstractEventLoop = None,
-                        ) -> 'P[B]':
+                        ) -> 'Pll[B]':
         if executor is None:
             executor = self.executor
         if loop is None:
@@ -89,7 +89,7 @@ class P(Generic[A], Iterable[A]):
 
     def bind(self,
              f : Callable[[A], Awaitable[B]],
-             ) -> 'P[B]':
+             ) -> 'Pll[B]':
         async def wrapped(coro : Awaitable[A]) -> B:
             return await f(await coro)
         _ : Any
@@ -101,7 +101,7 @@ class P(Generic[A], Iterable[A]):
 
     def show_progress(self,
                       style : Optional[str] = None,
-                      ) -> 'P[A]':
+                      ) -> 'Pll[A]':
         if style:
             _tqdm = getattr(tqdm, 'tqdm_' + style)
         else:
@@ -118,7 +118,7 @@ class P(Generic[A], Iterable[A]):
                                   )
 
     def as_completed(self,
-                     ) -> 'P[A]':
+                     ) -> 'Pll[A]':
         _ : Any
         _ = self.it
         _ = list(_)

@@ -1,12 +1,12 @@
 from setuptools import setup
 
 
-setup(name='p',
+setup(name='pll',
       version='0.1.0',
       author='Beta Faccion',
       author_email='betafcc@gmail.com',
-      packages=['p'],
+      packages=['pll'],
       install_requires=['tqdm'],
-      url='https://github.com/betafcc/p',
-      download_url='https://github.com/betafcc/p/tarball/v0.1.0',
+      url='https://github.com/betafcc/pll',
+      download_url='https://github.com/betafcc/pll/tarball/v0.1.0',
       )

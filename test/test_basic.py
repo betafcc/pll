@@ -1,8 +1,8 @@
-from p import P
+from pll import Pll
 
 
 def test_doesnt_break():
-    _ = P\
+    _ = Pll\
         .from_non_coroutines(range(10))\
         .map(lambda x: x ** 2)\
         .as_completed()\

@@ -9,7 +9,7 @@ ENV_ACTIVATE := $(ENV_BIN)/activate
 PY           := $(ENV_BIN)/python
 PIP          := $(ENV_BIN)/pip
 
-SRC_DIR  := p
+SRC_DIR  := pll
 TEST_DIR := test
 
 
