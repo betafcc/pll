@@ -21,7 +21,7 @@ dev:
 
 $(ENV_ACTIVATE): $(REQUIREMENTS)
 ifdef REQ_PY
-	virtualenv -p $(REQ_PY) $(ENV_DIR)
+	$(REQ_PY) -m venv $(ENV_DIR)
 	$(PIP) install -r $(REQUIREMENTS)
 	touch $(ENV_ACTIVATE)
 else
