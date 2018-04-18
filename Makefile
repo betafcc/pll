@@ -1,4 +1,4 @@
-REQ_VER := 3.6
+REQ_VER := 3.7
 REQ_PY := $(shell python3 -V | python3 -c "print('python3' if float(input().split()[1][:3]) >= $(REQ_VER) else '')")
 REQ_PY := $(shell command -v $(REQ_PY))
 REQUIREMENTS := requirements.txt
@@ -22,7 +22,7 @@ dev:
 $(ENV_ACTIVATE): $(REQUIREMENTS)
 ifdef REQ_PY
 	$(REQ_PY) -m venv $(ENV_DIR)
-	$(PIP) install -r $(REQUIREMENTS)
+	$(REQ_PY) -m pip install -r $(REQUIREMENTS)
 	touch $(ENV_ACTIVATE)
 else
 	$(error Required Python version $(REQ_VER) or above to build)
