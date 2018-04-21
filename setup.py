@@ -8,5 +8,5 @@ setup(name='pll',
       packages=['pll'],
       install_requires=['tqdm'],
       url='https://github.com/betafcc/pll',
-      download_url='https://github.com/betafcc/pll/tarball/v0.1.1',
+      download_url='https://github.com/betafcc/pll/tarball/v0.1.2',
       )
