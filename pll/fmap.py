@@ -1,7 +1,10 @@
 from typing import (
-    Coroutine, Generator, Iterator, Callable,
-    TypeVar, Any,
+    Callable, TypeVar, Any
 )
+from types import (
+    CoroutineType, FunctionType, GeneratorType
+)
+from collections.abc import Iterator
 from asyncio import Task
 
 import asyncio
@@ -43,7 +46,7 @@ def _(obj, f):
     return tuple(f(el) for el in obj)
 
 
-@_fmap.register(Coroutine)  # type: ignore
+@_fmap.register(CoroutineType)  # type: ignore
 def _(obj, f):
     async def wrapped():
         return f(await obj)
@@ -57,7 +60,7 @@ def _(obj, f):
     return asyncio.ensure_future(wrapped())
 
 
-@_fmap.register(Generator)  # type: ignore
+@_fmap.register(GeneratorType)  # type: ignore
 def _(obj, f):
     return (f(el) for el in obj)
 
@@ -67,6 +70,6 @@ def _(obj, f):
     return map(f, obj)
 
 
-@_fmap.register(Callable)  # type: ignore
+@_fmap.register(FunctionType)  # type: ignore
 def _(obj, f):
     return compose(f, obj)
