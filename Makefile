@@ -7,7 +7,7 @@ ENV_DIR      := venv
 ENV_BIN      := $(ENV_DIR)/bin
 ENV_ACTIVATE := $(ENV_BIN)/activate
 PY           := $(ENV_BIN)/python
-PIP          := $(ENV_BIN)/pip
+PIP          := $(ENV_BIN)/python -m pip
 
 SRC_DIR  := pll
 TEST_DIR := test
@@ -22,7 +22,8 @@ dev:
 $(ENV_ACTIVATE): $(REQUIREMENTS)
 ifdef REQ_PY
 	$(REQ_PY) -m venv $(ENV_DIR)
-	$(REQ_PY) -m pip install -r $(REQUIREMENTS)
+	$(PIP) install pip --upgrade
+	$(PIP) install -r $(REQUIREMENTS)
 	touch $(ENV_ACTIVATE)
 else
 	$(error Required Python version $(REQ_VER) or above to build)

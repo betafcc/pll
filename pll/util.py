@@ -1,75 +1,46 @@
-from typing import (
-    Callable, TypeVar, Any
-)
-from types import (
-    CoroutineType, FunctionType, GeneratorType
-)
-from collections.abc import Iterator
-from asyncio import Task
+from typing import Callable, Any, Iterable, Awaitable, TypeVar
 
 import asyncio
-from functools import partial, singledispatch
+from functools import wraps
+
+import tqdm  # type: ignore
+
+from .fmap import fmap  # NOQA
 
 
 A = TypeVar('A')
-B = TypeVar('B')
 
 
-def compose(f : Callable[[A], B],
-            g : Callable[..., A] = None,
-            ) -> Callable[..., B]:
-    if not g:
-        return partial(compose, f)
-    return lambda *args, **kwargs: f(g(*args, **kwargs))
+def as_submitted(it : Iterable[Awaitable[A]]
+                 ) -> Iterable[Awaitable[A]]:
+    _ = it
+    _ = [asyncio.ensure_future(el) for el in _]
+
+    return _
 
 
-def fmap(f   : Callable,
-         obj : Any = None,
-         ) -> Any:
-    if obj is None:
-        return partial(fmap, f)
-    return _fmap(obj, f)
+async def pure(el : A,
+               ) -> A:
+    return el
 
 
-@singledispatch
-def _fmap(obj, f):  # type: ignore
-    return obj.fmap(f)
+def run(coro : Awaitable[A],
+        ) -> A:
+    return asyncio\
+        .get_event_loop()\
+        .run_until_complete(coro)
 
 
-@_fmap.register(list)
-def _(obj, f):
-    return [f(el) for el in obj]
+def update_pbar(f    : Callable,
+                pbar : tqdm.tqdm,
+                n    : int = 1,
+                ) -> Callable:
+    @wraps(f)
+    def _update_pbar(*args    : Any,
+                     **kwargs : Any,
+                     ) -> Any:
+        result = f(*args, **kwargs)
+        pbar.update(n)
+        return result
 
-
-@_fmap.register(tuple)  # type: ignore
-def _(obj, f):
-    return tuple(f(el) for el in obj)
-
-
-@_fmap.register(CoroutineType)  # type: ignore
-def _(obj, f):
-    async def wrapped():
-        return f(await obj)
-    return wrapped()
-
-
-@_fmap.register(Task)  # type: ignore
-def _(obj, f):
-    async def wrapped():
-        return f(await obj)
-    return asyncio.ensure_future(wrapped())
-
-
-@_fmap.register(GeneratorType)  # type: ignore
-def _(obj, f):
-    return (f(el) for el in obj)
-
-
-@_fmap.register(Iterator)  # type: ignore
-def _(obj, f):
-    return map(f, obj)
-
-
-@_fmap.register(FunctionType)  # type: ignore
-def _(obj, f):
-    return compose(f, obj)
+    return _update_pbar
