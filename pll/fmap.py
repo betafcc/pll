@@ -2,7 +2,8 @@ from typing import (
     Callable, TypeVar, Any
 )
 from types import (
-    CoroutineType, FunctionType, GeneratorType
+    CoroutineType, GeneratorType, FunctionType,
+    MethodType, BuiltinFunctionType, BuiltinMethodType
 )
 from collections.abc import Iterator
 from asyncio import Task
@@ -70,6 +71,10 @@ def _(obj, f):
     return map(f, obj)
 
 
-@_fmap.register(FunctionType)  # type: ignore
+@_fmap.register(FunctionType)
+@_fmap.register(MethodType)
+@_fmap.register(BuiltinFunctionType)
+@_fmap.register(BuiltinMethodType)
+@_fmap.register(type)
 def _(obj, f):
     return compose(f, obj)
